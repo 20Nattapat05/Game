@@ -137,30 +137,24 @@ function getMovesForPiece(b, row, col, player) {
       c += dc;
     }
 
-    r = row + dr;
-    c = col + dc;
-    while (inBounds(r, c) && !b[r][c]) {
-      r += dr;
-      c += dc;
-    }
-
-    if (inBounds(r, c) && isOpponentPiece(b[r][c], player)) {
-      const capR = r;
-      const capC = c;
-      r += dr;
-      c += dc;
-      while (inBounds(r, c) && !b[r][c]) {
-        moves.push({
-          fromRow: row,
-          fromCol: col,
-          toRow: r,
-          toCol: c,
-          captureRow: capR,
-          captureCol: capC,
-        });
-        r += dr;
-        c += dc;
-      }
+    const r1 = row + dr;
+    const c1 = col + dc;
+    const r2 = row + 2 * dr;
+    const c2 = col + 2 * dc;
+    if (
+      inBounds(r2, c2) &&
+      b[r1] &&
+      isOpponentPiece(b[r1][c1], player) &&
+      !b[r2][c2]
+    ) {
+      moves.push({
+        fromRow: row,
+        fromCol: col,
+        toRow: r2,
+        toCol: c2,
+        captureRow: r1,
+        captureCol: c1,
+      });
     }
   }
 
@@ -336,7 +330,16 @@ function aiChooseMove() {
 
   for (const move of moves) {
     const newB = applyMove(board, move);
-    const result = minimax(newB, MAX_DEPTH - 1, -Infinity, Infinity, move.captureRow !== undefined && getCaptureMovesForPiece(newB, move.toRow, move.toCol, AI).length > 0 ? AI : HUMAN);
+    const result = minimax(
+      newB,
+      MAX_DEPTH - 1,
+      -Infinity,
+      Infinity,
+      move.captureRow !== undefined &&
+        getCaptureMovesForPiece(newB, move.toRow, move.toCol, AI).length > 0
+        ? AI
+        : HUMAN
+    );
     if (result.score < bestScore) {
       bestScore = result.score;
       bestMove = move;
