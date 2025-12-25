@@ -35,6 +35,7 @@ function handleCellClick(e) {
   const cell = e.target;
   const index = cell.getAttribute('data-index');
 
+  // ให้ X เป็นผู้เล่นคนจริง ส่วน O เป็นบอท
   if (currentPlayer !== 'X') {
     return;
   }
@@ -101,42 +102,72 @@ function aiMove() {
   makeMove(index, 'O');
 }
 
+// ใช้ Minimax เพื่อให้ O เล่นโหดสุด ๆ
 function findBestMoveForO() {
-  const emptyIndices = board
-    .map((value, idx) => (value === "" ? idx : null))
-    .filter(idx => idx !== null);
+  let bestScore = -Infinity;
+  let bestMove = null;
 
-  if (emptyIndices.length === 0) return null;
-
-  for (let i of emptyIndices) {
-    board[i] = 'O';
-    if (checkWinner('O')) {
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === "") {
+      board[i] = 'O';
+      const score = minimax(board, 0, false); // ตาต่อไปเป็นของ X
       board[i] = "";
-      return i;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
     }
-    board[i] = "";
   }
 
-  for (let i of emptyIndices) {
-    board[i] = 'X';
-    if (checkWinner('X')) {
-      board[i] = "";
-      return i;
+  return bestMove;
+}
+
+function minimax(boardState, depth, isMaximizing) {
+  if (isWinner(boardState, 'O')) {
+    return 10 - depth; // ชนะเร็ว ดีกว่า
+  }
+  if (isWinner(boardState, 'X')) {
+    return -10 + depth; // แพ้ช้า ดีกว่าแพ้เร็วหน่อยนึง
+  }
+  if (!boardState.includes("")) {
+    return 0; // เสมอ
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i] === "") {
+        boardState[i] = 'O';
+        const score = minimax(boardState, depth + 1, false);
+        boardState[i] = "";
+        bestScore = Math.max(bestScore, score);
+      }
     }
-    board[i] = "";
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i] === "") {
+        boardState[i] = 'X';
+        const score = minimax(boardState, depth + 1, true);
+        boardState[i] = "";
+        bestScore = Math.min(bestScore, score);
+      }
+    }
+    return bestScore;
   }
+}
 
-  if (board[4] === "") {
-    return 4;
-  }
-
-  const corners = [0, 2, 6, 8];
-  const availableCorners = corners.filter(i => board[i] === "");
-  if (availableCorners.length > 0) {
-    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
-  }
-
-  return emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+function isWinner(boardState, player) {
+  return winningConditions.some(cond => {
+    const [a, b, c] = cond;
+    return (
+      boardState[a] === player &&
+      boardState[b] === player &&
+      boardState[c] === player
+    );
+  });
 }
 
 function resetGame() {
