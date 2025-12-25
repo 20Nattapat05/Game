@@ -35,7 +35,6 @@ function handleCellClick(e) {
   const cell = e.target;
   const index = cell.getAttribute('data-index');
 
-  // ให้ X เป็นผู้เล่นคนจริง ส่วน O เป็นบอท
   if (currentPlayer !== 'X') {
     return;
   }
@@ -102,7 +101,6 @@ function aiMove() {
   makeMove(index, 'O');
 }
 
-// ใช้ Minimax เพื่อให้ O เล่นโหดสุด ๆ
 function findBestMoveForO() {
   let bestScore = -Infinity;
   let bestMove = null;
@@ -110,7 +108,7 @@ function findBestMoveForO() {
   for (let i = 0; i < board.length; i++) {
     if (board[i] === "") {
       board[i] = 'O';
-      const score = minimax(board, 0, false); // ตาต่อไปเป็นของ X
+      const score = minimax(board, 0, false);
       board[i] = "";
 
       if (score > bestScore) {
@@ -125,13 +123,13 @@ function findBestMoveForO() {
 
 function minimax(boardState, depth, isMaximizing) {
   if (isWinner(boardState, 'O')) {
-    return 10 - depth; // ชนะเร็ว ดีกว่า
+    return 10 - depth;
   }
   if (isWinner(boardState, 'X')) {
-    return -10 + depth; // แพ้ช้า ดีกว่าแพ้เร็วหน่อยนึง
+    return -10 + depth;
   }
   if (!boardState.includes("")) {
-    return 0; // เสมอ
+    return 0;
   }
 
   if (isMaximizing) {
@@ -170,16 +168,24 @@ function isWinner(boardState, player) {
   });
 }
 
+function randomStartPlayer() {
+  return Math.random() < 0.5 ? 'X' : 'O';
+}
+
 function resetGame() {
   board = ["", "", "", "", "", "", "", "", ""];
   gameActive = true;
-  currentPlayer = 'X';
+  currentPlayer = randomStartPlayer();
   statusDisplay.textContent = `ถึงตาผู้เล่น: ${currentPlayer}`;
 
   cells.forEach(cell => {
     cell.textContent = "";
     cell.classList.remove('cell-x', 'cell-o', 'fw-bold');
   });
+
+  if (currentPlayer === 'O') {
+    setTimeout(aiMove, 400);
+  }
 }
 
 cells.forEach(cell => {
@@ -187,3 +193,6 @@ cells.forEach(cell => {
 });
 
 document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+// เริ่มเกมครั้งแรก: สุ่มว่าคนหรือบอทเริ่มก่อน
+resetGame();
