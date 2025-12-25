@@ -1,44 +1,72 @@
 * {
     box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
 }
 
 body {
     margin: 0;
     min-height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 16px;
     background: #111827;
     color: #e5e7eb;
 }
 
 .game-container {
     background: #1f2933;
-    padding: 24px;
+    padding: 20px;
     border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    max-width: 480px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
     width: 100%;
+    max-width: 480px;
+}
+
+/* บนจอเล็ก เน้นให้เต็มจอด้านบน และ scroll ได้ */
+@media (max-width: 480px) {
+    body {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .game-container {
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
 }
 
 h1 {
     margin: 0 0 8px;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     text-align: center;
 }
 
 .subtitle {
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #9ca3af;
     margin-bottom: 16px;
 }
 
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+    }
+}
+
+/* การ์ดตัวเลข */
+
 .numbers {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 16px;
     flex-wrap: wrap;
 }
@@ -54,8 +82,19 @@ h1 {
     justify-content: center;
     font-size: 2rem;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s, background 0.1s;
+    transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s,
+        background 0.1s;
     user-select: none;
+}
+
+/* ปรับการ์ดให้เล็กลงหน่อยบนมือถือ */
+
+@media (max-width: 400px) {
+    .card {
+        width: 64px;
+        height: 86px;
+        font-size: 1.6rem;
+    }
 }
 
 .card:hover {
@@ -69,17 +108,14 @@ h1 {
     box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.4);
 }
 
-.card.used {
-    opacity: 0.2;
-    cursor: default;
-}
+/* ปุ่มเครื่องหมาย */
 
 .ops {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 button.op {
@@ -92,7 +128,16 @@ button.op {
     font-size: 1rem;
     min-width: 44px;
     text-align: center;
-    transition: background 0.1s, transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+    transition: background 0.1s, transform 0.1s, box-shadow 0.1s,
+        border-color 0.1s;
+}
+
+@media (max-width: 480px) {
+    button.op {
+        padding: 6px 10px;
+        font-size: 0.95rem;
+        min-width: 40px;
+    }
 }
 
 button.op:hover {
@@ -106,11 +151,14 @@ button.op.selected {
     border-color: #facc15;
 }
 
+/* ปุ่มควบคุม */
+
 .actions {
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 button.control {
@@ -130,28 +178,29 @@ button.control.secondary {
     background: #374151;
 }
 
+@media (max-width: 480px) {
+    button.control {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}
+
 button.control:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 12px rgba(15, 23, 42, 0.6);
 }
 
+/* ข้อความและประวัติ */
+
 .status {
     font-size: 0.9rem;
     color: #d1d5db;
-    min-height: 1.5em;
+    min-height: 1.6em;
     margin-bottom: 4px;
 }
 
 .status strong {
     color: #facc15;
-}
-
-.history {
-    font-size: 0.8rem;
-    color: #9ca3af;
-    max-height: 80px;
-    overflow-y: auto;
-    padding-right: 4px;
 }
 
 .history-title {
@@ -160,6 +209,17 @@ button.control:hover {
     margin-bottom: 2px;
     color: #6b7280;
 }
+
+.history {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    max-height: 90px;
+    overflow-y: auto;
+    padding-right: 4px;
+    border-radius: 4px;
+}
+
+/* note ข้างล่าง */
 
 .footer-note {
     margin-top: 8px;
