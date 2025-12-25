@@ -1,8 +1,8 @@
 const SIZE = 8;
 const HUMAN = "r";
 const AI = "b";
-const MAX_DEPTH = 6;
-const AI_TIME_LIMIT_MS = 2000;
+const MAX_DEPTH = 8;
+const AI_TIME_LIMIT_MS = 2500;
 
 let board = [];
 let currentPlayer = HUMAN;
@@ -228,19 +228,19 @@ function evaluateBoard(b) {
       const lower = piece.toLowerCase();
 
       let val = 0;
-      if (lower === "r") val = 100;
-      if (lower === "b") val = -100;
-      if (piece === "R") val = 200;
-      if (piece === "B") val = -200;
+      if (lower === "r") val = 120;
+      if (lower === "b") val = -120;
+      if (piece === "R") val = 260;
+      if (piece === "B") val = -260;
 
-      const center = r >= 2 && r <= 5 && c >= 2 && c <= 5 ? 10 : 0;
+      const center = r >= 2 && r <= 5 && c >= 2 && c <= 5 ? 12 : 0;
       if (lower === HUMAN) val += center;
       else val -= center;
 
       if (lower === "r") {
-        val += (SIZE - 1 - r) * 2;
+        val += (SIZE - 1 - r) * 3;
       } else if (lower === "b") {
-        val -= r * 2;
+        val -= r * 3;
       }
 
       score += val;
@@ -249,7 +249,7 @@ function evaluateBoard(b) {
 
   const humanMoves = getAllMoves(b, HUMAN).length;
   const aiMoves = getAllMoves(b, AI).length;
-  score += (humanMoves - aiMoves) * 3;
+  score += (humanMoves - aiMoves) * 4;
 
   return score;
 }
@@ -273,9 +273,23 @@ function minimax(b, depth, alpha, beta, playerToMove) {
     let maxEval = -Infinity;
     for (const move of moves) {
       const newB = applyMove(b, move);
-      const result = minimax(newB, depth - 1, alpha, beta, AI);
-      maxEval = Math.max(maxEval, result.score);
-      alpha = Math.max(alpha, result.score);
+      let nextPlayer = HUMAN;
+      if (move.captureRow !== undefined) {
+        const moreCaps = getCaptureMovesForPiece(
+          newB,
+          move.toRow,
+          move.toCol,
+          HUMAN
+        );
+        if (moreCaps.length === 0) nextPlayer = AI;
+      } else {
+        nextPlayer = AI;
+      }
+      const result = minimax(newB, depth - 1, alpha, beta, nextPlayer);
+      if (result.score > maxEval) {
+        maxEval = result.score;
+      }
+      if (result.score > alpha) alpha = result.score;
       if (beta <= alpha) break;
     }
     return { score: maxEval };
@@ -283,9 +297,23 @@ function minimax(b, depth, alpha, beta, playerToMove) {
     let minEval = Infinity;
     for (const move of moves) {
       const newB = applyMove(b, move);
-      const result = minimax(newB, depth - 1, alpha, beta, HUMAN);
-      minEval = Math.min(minEval, result.score);
-      beta = Math.min(beta, result.score);
+      let nextPlayer = AI;
+      if (move.captureRow !== undefined) {
+        const moreCaps = getCaptureMovesForPiece(
+          newB,
+          move.toRow,
+          move.toCol,
+          AI
+        );
+        if (moreCaps.length === 0) nextPlayer = HUMAN;
+      } else {
+        nextPlayer = HUMAN;
+      }
+      const result = minimax(newB, depth - 1, alpha, beta, nextPlayer);
+      if (result.score < minEval) {
+        minEval = result.score;
+      }
+      if (result.score < beta) beta = result.score;
       if (beta <= alpha) break;
     }
     return { score: minEval };
@@ -298,7 +326,7 @@ function aiChooseMove() {
 
   aiStartTime = Date.now();
   let bestScore = Infinity;
-  let bestMoves = [];
+  let bestMove = null;
 
   moves.sort((a, b) => {
     const ca = a.captureRow !== undefined ? 1 : 0;
@@ -308,19 +336,17 @@ function aiChooseMove() {
 
   for (const move of moves) {
     const newB = applyMove(board, move);
-    const result = minimax(newB, MAX_DEPTH - 1, -Infinity, Infinity, HUMAN);
+    const result = minimax(newB, MAX_DEPTH - 1, -Infinity, Infinity, move.captureRow !== undefined && getCaptureMovesForPiece(newB, move.toRow, move.toCol, AI).length > 0 ? AI : HUMAN);
     if (result.score < bestScore) {
       bestScore = result.score;
-      bestMoves = [move];
-    } else if (result.score === bestScore) {
-      bestMoves.push(move);
+      bestMove = move;
     }
 
     if (Date.now() - aiStartTime > AI_TIME_LIMIT_MS) break;
   }
 
-  if (bestMoves.length === 0) return moves[0];
-  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+  if (!bestMove) return moves[0];
+  return bestMove;
 }
 
 function aiChainCaptures(startRow, startCol) {
@@ -374,7 +400,7 @@ function aiTurn() {
 
     const humanMoves = getAllMoves(board, HUMAN);
     if (humanMoves.length === 0) {
-      updateStatus("จบเกม! คุณเดินไม่ได้ AI ชนะ 😈");
+      updateStatus("จบเกม! คุณเดินไม่ได้ AI ชนะ");
       renderBoard();
       return;
     }
