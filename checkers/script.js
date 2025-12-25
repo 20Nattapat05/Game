@@ -88,11 +88,13 @@ function getMovesForPiece(b, row, col, player) {
   const moves = [];
   const isKing = piece === "R" || piece === "B";
 
+  // ----- ตัวธรรมดา -----
   if (!isKing) {
     for (const [dr, dc] of dirs) {
       const r1 = row + dr;
       const c1 = col + dc;
 
+      // เดินธรรมดาหนึ่งช่อง
       if (inBounds(r1, c1) && !b[r1][c1]) {
         moves.push({
           fromRow: row,
@@ -102,6 +104,7 @@ function getMovesForPiece(b, row, col, player) {
         });
       }
 
+      // กินกระโดด 2 ช่อง
       const r2 = row + 2 * dr;
       const c2 = col + 2 * dc;
       if (
@@ -123,9 +126,13 @@ function getMovesForPiece(b, row, col, player) {
     return moves;
   }
 
+  // ----- KING -----
+  // เดินไกลได้ + กินจากระยะไกลได้ แต่เวลาลงต้องอยู่หลังตัวที่กินเพียง 1 ช่อง
   for (const [dr, dc] of dirs) {
     let r = row + dr;
     let c = col + dc;
+
+    // เดินธรรมดา: เลื่อนผ่านช่องว่างได้หลายช่อง
     while (inBounds(r, c) && !b[r][c]) {
       moves.push({
         fromRow: row,
@@ -137,25 +144,23 @@ function getMovesForPiece(b, row, col, player) {
       c += dc;
     }
 
-    const r1 = row + dr;
-    const c1 = col + dc;
-    const r2 = row + 2 * dr;
-    const c2 = col + 2 * dc;
-    if (
-      inBounds(r2, c2) &&
-      b[r1] &&
-      isOpponentPiece(b[r1][c1], player) &&
-      !b[r2][c2]
-    ) {
-      moves.push({
-        fromRow: row,
-        fromCol: col,
-        toRow: r2,
-        toCol: c2,
-        captureRow: r1,
-        captureCol: c1,
-      });
+    // ถ้าเจอตัวศัตรูเป็นตัวแรกในทิศนั้น
+    if (inBounds(r, c) && isOpponentPiece(b[r][c], player)) {
+      const rAfter = r + dr;
+      const cAfter = c + dc;
+      // ต้องเป็นช่องว่าง "ถัดจาก" ตัวที่กิน 1 ช่องเท่านั้น
+      if (inBounds(rAfter, cAfter) && !b[rAfter][cAfter]) {
+        moves.push({
+          fromRow: row,
+          fromCol: col,
+          toRow: rAfter,
+          toCol: cAfter,
+          captureRow: r,
+          captureCol: c,
+        });
+      }
     }
+    // ถ้าเจอทั้งตัวเราเองหรือศัตรูให้หยุดทิศนี้เลย
   }
 
   return moves;
