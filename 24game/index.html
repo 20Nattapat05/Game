@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>เกม 24 ด้วย HTML/CSS/JS</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>เกม 24</h1>
+        <div class="subtitle">
+            ใช้เลขทั้ง 4 ให้เหลือเลขเดียวที่เป็น <strong>24</strong><br />
+            เลือกเลข → เลือกเลขอีกตัว → เลือกเครื่องหมาย
+        </div>
+
+        <div class="numbers" id="numbers"></div>
+
+        <div class="ops">
+            <button class="op" data-op="+">+</button>
+            <button class="op" data-op="-">−</button>
+            <button class="op" data-op="*">×</button>
+            <button class="op" data-op="/">÷</button>
+            <button class="op" data-op="sqrt">√</button>
+            <button class="op" data-op="pow">xʸ</button>
+        </div>
+
+        <div class="actions">
+            <button class="control" id="newGameBtn">สุ่มด่านใหม่</button>
+            <button class="control secondary" id="resetBtn">เริ่มด่านนี้ใหม่</button>
+        </div>
+
+        <div class="status" id="status"></div>
+        <div class="history-title">ประวัติการคิด:</div>
+        <div class="history" id="history"></div>
+
+        <div class="footer-note">
+            หมายเหตุ: ด่านสุ่มมาจากเลข 1–9 แบบที่มีวิธีทำให้เป็น <code>24</code> แน่นอน (ด้วย + − × ÷)<br />
+            √ และ xʸ มีไว้ให้ลองเล่นยากขึ้น 😉
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
