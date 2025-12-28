@@ -1,0 +1,80 @@
+body {
+    background: radial-gradient(circle at top, #1b2735, #090a0f);
+    min-height: 100vh;
+}
+
+.game-card {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .1);
+    backdrop-filter: blur(8px);
+}
+
+.badge-round {
+    background: #ffc107;
+    color: #000;
+}
+
+.history span {
+    margin: 3px;
+}
+
+/* Result Neon */
+.result-up {
+    color: #00ffb3;
+    text-shadow: 0 0 10px #00ffb3;
+    font-weight: bold;
+}
+
+.result-down {
+    color: #ff5c5c;
+    text-shadow: 0 0 10px #ff5c5c;
+    font-weight: bold;
+}
+
+.result-win {
+    color: #ffe066;
+    text-shadow: 0 0 15px #ffe066;
+    font-weight: bold;
+}
+
+.result-lose {
+    color: #ff2e2e;
+    text-shadow: 0 0 15px #ff2e2e;
+    font-weight: bold;
+}
+
+/* History Neon */
+.his-up {
+    background: #00ffb3 !important;
+    color: #000;
+    box-shadow: 0 0 10px #00ffb3;
+}
+
+.his-down {
+    background: #ff5c5c !important;
+    color: #000;
+    box-shadow: 0 0 10px #ff5c5c;
+}
+
+.his-win {
+    background: #ffe066 !important;
+    color: #000;
+    box-shadow: 0 0 12px #ffe066;
+}
+
+/* Mobile */
+@media(max-width:576px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    input,
+    button {
+        font-size: 1.2rem;
+    }
+
+    .history span {
+        font-size: .9rem;
+        padding: 8px 10px;
+    }
+}
